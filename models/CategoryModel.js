@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 // 2.字义Schema(描述文档结构)
 const categorySchema = new mongoose.Schema({
-  name: { type: String, require: true },//分类名称
+  title: { type: String, require: true },//分类名称
   keyword: { type: String, required: true }, // 分类关键字
 })
 

@@ -6,18 +6,22 @@ const res = require("../helpers/response-helper.js")
 class CategoryController {
     // 创建分类
     static async create(ctx, next) {
+        // 1.验证 title keyowrd
         categoryValidator(ctx)
 
-        const { name, keyword } = ctx.request.body;
-        const hasCategory = await CategoryModel.findOne({ name });
+        // 2.分类是否存在: title 不能重复
+        const { title, keyword } = ctx.request.body;
+        const hasCategory = await CategoryModel.findOne({ title });
         if (hasCategory) {
             throw new global.errs.Existing("分类名已存在")
         }
 
+        // 3.不存在，则新建分类
         await CategoryModel.create({
-            name, keyword
+            title, keyword
         });
 
+        // 4.返回
         ctx.body = res.success("创建分类成功")
     }
 

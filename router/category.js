@@ -1,13 +1,12 @@
 const Router = require("@koa/router");
 const jwtAuth = require("koa-jwt")
 const CategoryController = require("../controller/CategoryController")
-const config = require("../config/index.js")
 
 const router = new Router();
 
 
 // 创建分类
-router.post("/category", jwtAuth({ secret: config.security.secretKey }), CategoryController.create)
+router.post("/category", jwtAuth({ secret: global.config.security.secretKey }), CategoryController.create)
 
 // 获取所有分类  jwtAuth({ secret: config.security.secretKey }),
 router.get("/category", CategoryController.getCategoryList)
