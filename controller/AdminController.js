@@ -38,11 +38,11 @@ class AdminController {
 
         // 得到前端传递的用户名和密码
         let { nickname, password } = ctx.request.body;
-        // console.log(nickname, password);
 
+        // 验证用户名、密码、颁发token
         let user = await LoginManager.adminLogin({ nickname, password })
-        // console.log("user", user);
 
+        // 返回数据
         ctx.body = res.json(user)
     }
 
