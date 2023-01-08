@@ -1,7 +1,6 @@
 const Router = require("@koa/router");
-const jwtAuth = require("koa-jwt")
+const koajwt = require("koa-jwt")
 const AdminController = require("../controller/AdminController")
-const config = require("../config/index.js")
 
 const router = new Router();
 
@@ -15,7 +14,7 @@ router.post("/register", AdminController.register)
 // 登录 
 router.post("/login", AdminController.login)
 
-// 获取用户
-router.get("/user/info", jwtAuth({ secret: config.security.secretKey }), AdminController.getUserInfo)
+// 获取用户：先用 koa-jwt 验证 token，验证通过后，可在 ctx.state.user(默认) 获取用户信息
+router.get("/user/info", koajwt({ secret: global.config.security.secretKey }), AdminController.getUserInfo)
 
 module.exports = router;

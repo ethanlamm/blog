@@ -48,11 +48,19 @@ class AdminController {
 
     // 获取用户信息
     static async getUserInfo(ctx, next) {
+        // 可在 ctx.state.user(默认) 获取用户信息
+        // ctx.state.user.data 就是颁发 token 时使用的 data 数据，即用户_id
+        // console.log(ctx.state.user)
+
         let _id = ctx.state.user.data;
+
+        // 依据_id到数据库查找用户信息
         let userInfo = await AdminModel.findById({ _id });
         if (!userInfo) {
             throw new global.errs.AuthFailed("用户不存在")
         }
+
+        // 返回数据（注意某些数据的私密性）
         ctx.body = res.json({ _id, nickname: userInfo.nickname })
     }
 }
