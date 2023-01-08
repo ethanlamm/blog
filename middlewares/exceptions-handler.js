@@ -11,9 +11,9 @@ const catchError = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    console.log(error instanceof bouncer.ValidationError)
     // 判断校验类型错误
     if (error instanceof bouncer.ValidationError) {
+      console.log('校验错误')
       ctx.body = {
         name: error.name,
         message: error.message,
@@ -23,6 +23,7 @@ const catchError = async (ctx, next) => {
     }
     // 401权限错误处理
     if (error.status === 401) {
+      console.log('权限错误')
       ctx.status = 401;
       ctx.body = {
         error_code: error.status,
@@ -34,8 +35,8 @@ const catchError = async (ctx, next) => {
     }
     // 判断当前错误是否为Http请求错误
     const isHttpException = error instanceof HttpException;
-    console.log(error)
     if (isHttpException) {
+      console.log('Http请求错误')
       // 设置状态码
       ctx.status = error.code;
       // 设置错误响应数据

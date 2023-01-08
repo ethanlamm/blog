@@ -6,20 +6,18 @@ const res = require("../helpers/response-helper.js")
 class AdminController {
     // 注册
     static async register(ctx, next) {
-        console.log("我是控制器中的register方法，此方法是用来实现注册");
 
         // 第一件事：先进行数据校验，通过后，再向下走
         registerValidator(ctx)
 
         // 第二件事：获取用户名和密码
         let { nickname, password2 } = ctx.request.body;
-        // console.log(nickname, password2);
 
         // 第三件事：判断数据库中否有同名的用户名
         let currentUser = await AdminModel.findOne({
             nickname
         });
-        // console.log("currentUser:", currentUser);
+        // 若存在，抛出对应错误
         if (currentUser) {
             throw new global.errs.Existing("用户已存在", 900)
         }
@@ -28,14 +26,8 @@ class AdminController {
         let user = await AdminModel.create({
             nickname, password: password2
         });
-        // 之前的写法
-        // ctx.body = {
-        //     code: 200,
-        //     msg: "success",
-        //     data: user,
-        //     errorCode: 0
-        // }
-        // 现在的写法
+
+        // 返回数据
         ctx.body = res.json(user)
     }
 
