@@ -25,59 +25,27 @@ class CategoryController {
         ctx.body = res.success("创建分类成功")
     }
 
-    // 获取所有分类  
-    // static async getCategoryList(ctx, next) {
-    //     const { pageIndex = 1, pageSize = 10 } = ctx.query
-    //     const totalSize = await CategoryModel.find().countDocuments();
 
-    //     CategoryModel.find()
-
-    //     const categoryList = await CategoryModel
-    //         .find()
-    //         .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
-    //         .limit(+pageSize)
-    //         .sort({ _id: -1 });
-
-    //     ctx.body = res.json({
-    //         data: categoryList,
-    //         totalSize,
-    //         pageIndex: parseInt(pageIndex),
-    //         pageSize: parseInt(pageSize)
-    //     })
-    // }
-
-    // 获取所有分类   获取某个分类下的文章数
+    // 获取所有分类
     static async getCategoryList(ctx, next) {
-        // 抽取query传参，若没有则是默认值
+        // 获取query传参，若没有则是默认值
         const { pageIndex = 1, pageSize = 10 } = ctx.query;
         // 获取整个分类的总数
         const totalSize = await CategoryModel.find().countDocuments();
+        // 获取分类list，根据id倒序
         const categoryList = await CategoryModel.find()
             .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
             .limit(parseInt(pageSize))
             .sort({
                 _id: -1,
             });
-        //每个下面的文章数
-        let artList = [];
-        let listnum = 0;
-        for (let i = 0; i < totalSize; i++) {
-            listnum = await ArticleModel.find({
-                category_id: categoryList[i]._id,
-            }).countDocuments();
-            artList.push(listnum);
-            // console.log(listnum);
-        }
-        //循环将数组中的数据加到大树组的每一个对象属性上
-        for (let i = 0; i < totalSize; i++) {
-            categoryList[i]._doc.article_nums = artList[i];
-        }
+
+        // 返回数据
         ctx.body = res.json({
             data: categoryList,
             totalSize,
             pageIndex: parseInt(pageIndex),
             pageSize: parseInt(pageSize),
-            artList,
         });
     }
 

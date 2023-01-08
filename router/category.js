@@ -4,6 +4,10 @@ const CategoryController = require("../controller/CategoryController")
 
 const router = new Router();
 
+// PS：后端开发时，可先不验证token（只要之前验证token的流程无误）
+// 这样可不用每次测试接口时都传入token
+// 到真实上线时，要验证token的接口，则在路由中间件加上token验证即可
+// jwtAuth({ secret: config.security.secretKey })
 
 // 创建分类
 router.post("/category", jwtAuth({ secret: global.config.security.secretKey }), CategoryController.create)
