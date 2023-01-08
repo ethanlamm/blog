@@ -1,7 +1,7 @@
 // 1.引入mongoose
 const mongoose = require("mongoose");
 // 对密码加盐处理
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 // 配置加盐的位数
 const SALT_WORK_FACTOR = 10;
 // 2.定义Schema(描述文档结构)

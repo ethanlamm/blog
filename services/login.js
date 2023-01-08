@@ -1,5 +1,5 @@
 const AdminModel = require("../models/AdminModel")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const { generateToken } = require("../helpers/token-helper.js")
 
 class LoginManager {
