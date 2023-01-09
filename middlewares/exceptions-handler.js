@@ -6,6 +6,9 @@
 const { HttpException } = require("../helpers/exceptions-helper");
 const bouncer = require("koa-bouncer");
 
+// mongoose
+const mongoose = require("mongoose");
+
 // 当出现任何的错误时，我们需要错误处理中间件来处理
 const catchError = async (ctx, next) => {
   try {
@@ -31,6 +34,17 @@ const catchError = async (ctx, next) => {
         msg: error.originalError ? error.originalError.message : error.message,
         request: `${ctx.method} ${ctx.path}`,
       };
+      return;
+    }
+    // 406 mongoose错误，mongoose不能根据客户端请求的内容特性完成请求
+    if (error instanceof mongoose.Error) {
+      console.log('mongoose错误')
+      ctx.status = 406;
+      ctx.body = {
+        name: error.name,
+        request: `${ctx.method} ${ctx.path}`,
+        message: error.message
+      }
       return;
     }
     // 判断当前错误是否为Http请求错误

@@ -65,20 +65,26 @@ class CategoryController {
     // 更新分类
     static async updateCategoryById(ctx, next) {
         const _id = ctx.params._id;
-        // console.log(_id);
 
         // 校验name和keyword
         categoryValidator(ctx)
         const { name, keyword } = ctx.request.body;
 
-        // category是更新前的category
-        const category = await CategoryModel.findByIdAndUpdate({ _id }, { name, keyword });
-
+        // 更新是依据_id找到分类
+        const category = await CategoryModel.findOne({ _id });
         if (!category) {
             throw new global.errs.NotFound("没有找到相关分类")
         }
+        // 验证更新的分类的name是否已存在
+        const hasCategory = await CategoryModel.findOne({ name });
+        if (hasCategory) {
+            throw new global.errs.Existing("分类名已存在")
+        }
 
-        ctx.body = res.json("更新成功")
+        // 更新
+        await CategoryModel.findByIdAndUpdate({ _id }, { name, keyword })
+
+        ctx.body = res.success("更新成功")
     }
 
     // 删除分类
