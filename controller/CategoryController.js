@@ -91,17 +91,15 @@ class CategoryController {
     static async deleteCategoryById(ctx, next) {
         const _id = ctx.params._id;
 
-        // category是删除前的category
+        // 注意：category是删除前的category
         const category = await CategoryModel.findByIdAndDelete({ _id });
 
         if (!category) {
             throw new global.errs.NotFound("没有找到相关分类")
         }
 
-        ctx.body = res.json("删除成功")
+        ctx.body = res.success("删除成功")
     }
-
-
 }
 
 // 导出去一个类
