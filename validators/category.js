@@ -1,6 +1,6 @@
 function categoryValidator(ctx) {
-  ctx.validateBody('title')
-    .required('分类 title 名字不能为空')
+  ctx.validateBody('name')
+    .required('分类 name 名字不能为空')
     .isString()
     .trim()
   ctx.validateBody('keyword')
