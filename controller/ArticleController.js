@@ -9,13 +9,14 @@ class ArticleController {
     static async create(ctx, next) {
         articleValidator(ctx)
 
+        // 获取标题，标题不能重复
         const { title } = ctx.request.body;
-
         const hasArticle = await ArticleModel.findOne({ title })
         if (hasArticle) {
-            throw new global.errs.Existing("文章标题已存在，换个吧~")
+            throw new global.errs.Existing("文章标题已存在，请更换标题")
         }
 
+        // 创建
         await ArticleModel.create(ctx.request.body)
         ctx.body = res.success("创建成功")
     }
