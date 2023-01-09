@@ -25,43 +25,57 @@ class ArticleController {
     //   1）获取所有文章
     //   2）根据某个分类，获取某个分类下的所有的文章
     //   3）根据关键字，获取含有此关键字的文章
+    //   4）根据某个分类 + 关键字获取文章
     static async getArticleList(ctx, next) {
-        const {
-            category_id = null,
-            pageIndex = 1,
-            pageSize = 10,
-            keyword
+        const {                 // 更理想的传参应该是
+            category_id = null, // query，可选
+            keyword = null,     // query，可选
+            pageIndex = 1,      // body，默认第1页
+            pageSize = 10       // body，默认每页10条数据
         } = ctx.query
+
+        // 查询条件
+        // 4.都不传，则查询所有
         let filter = {};
-        if (category_id) {
+
+        if (category_id && !keyword) {
+            // 1.只传 category_id
+            filter = { category_id }
+        } else if (!category_id && keyword) {
+            // 2.只传 keyword
+            filter = {
+                // 模糊匹配，i 忽略大小写
+                keyword: {
+                    $regex: new RegExp(keyword, "i"),
+                }
+            }
+        } else if (category_id && keyword) {
+            // 3.都传
             filter = {
                 category_id,
-            };
+                keyword: {
+                    $regex: new RegExp(keyword, "i"),
+                }
+            }
         }
-        // 得到数据库中总的文章数
-        const totalSize = await ArticleModel.find().countDocuments();
+
+        // 根据查询条件得到符合条件的文章总数
+        const totalSize = await ArticleModel.find(filter).countDocuments();
 
         const articleList = await ArticleModel
             .find(filter)
             .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
-            .limit(+pageSize)
-            .or([
-                //   模糊搜索查询    正则  RegExp是正则类   node   new EegExp("node", "i")
-                {
-                    // 匹配匹配
-                    keyword: {
-                        $regex: new RegExp(keyword, "i"),
-                    },
-                },
-            ])
+            .limit(parseInt(pageSize))
             .sort({ _id: -1 })
-            .populate("category_id");  // //连表查询
+            // 连表查询 https://blog.csdn.net/elliott_yoho/article/details/53537147
+            .populate("category_id");
 
+        // 返回数据
         ctx.body = res.json({
             content: articleList,
-            pageIndex: parseInt(pageIndex),
-            pageSize: parseInt(pageSize),
             totalSize,
+            pageIndex: parseInt(pageIndex),
+            pageSize: parseInt(pageSize)
         });
     }
 
