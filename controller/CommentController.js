@@ -81,14 +81,13 @@ class CommentController {
     static async deleteCommentById(ctx, next) {
         const _id = ctx.params._id;
 
-        // category是删除前的category
         const comment = await CommentModel.findByIdAndDelete({ _id });
 
         if (!comment) {
             throw new global.errs.NotFound("没有找到相关评论")
         }
 
-        ctx.body = res.json("删除评论成功")
+        ctx.body = res.success("删除评论成功")
     }
 
     // 下面两个方法用于一个文章下的所有评论
