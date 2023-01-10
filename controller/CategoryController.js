@@ -10,16 +10,14 @@ class CategoryController {
         categoryValidator(ctx)
 
         // 2.分类是否存在: name 不能重复
-        const { name, keyword } = ctx.request.body;
+        const { name } = ctx.vals;
         const hasCategory = await CategoryModel.findOne({ name });
         if (hasCategory) {
             throw new global.errs.Existing("分类名已存在")
         }
 
-        // 3.不存在，则新建分类
-        await CategoryModel.create({
-            name, keyword
-        });
+        // 3.不存在，则新建分类  create 时会验证 ctx.vals 的数据
+        await CategoryModel.create(ctx.vals);
 
         // 4.返回
         ctx.body = res.success("创建分类成功")
@@ -68,7 +66,7 @@ class CategoryController {
 
         // 校验name和keyword
         categoryValidator(ctx)
-        const { name, keyword } = ctx.request.body;
+        const { name } = ctx.vals;
 
         // 更新是依据_id找到分类
         const category = await CategoryModel.findOne({ _id });
@@ -82,8 +80,8 @@ class CategoryController {
             throw new global.errs.Existing("分类名已存在")
         }
 
-        // 更新
-        await CategoryModel.findByIdAndUpdate({ _id }, { name, keyword })
+        // ✨更新 验证
+        await CategoryModel.findByIdAndUpdate({ _id }, ctx.vals, { runValidators: true })
 
         ctx.body = res.success("更新成功")
     }

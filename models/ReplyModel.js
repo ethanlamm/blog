@@ -4,11 +4,11 @@ const moment = require('moment')
 
 // 2.字义Schema(描述文档结构)
 const ReplySchema = new mongoose.Schema({
-  nickname: { type: String, require: true },//评论人昵称
-  content: { type: String, require: true }, //评论内容
+  nickname: { type: String, required: true },//评论人昵称
+  content: { type: String, required: true }, //评论内容
   createAt: {
     type: Date,
-    require: true,
+    required: true,
     default: Date.now,
     // 处理时间 
     get(val) {

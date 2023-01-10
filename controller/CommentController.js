@@ -11,22 +11,16 @@ class CommentController {
         commentValidator(ctx)
 
         // ✨要拿到验证之后的数据 ctx.vals✨
-        const { nickname, content, target_id } = ctx.vals
+        const { target_id } = ctx.vals
         const hasArticle = await ArticleModel.findById({ _id: target_id })
         if (!hasArticle) {
             throw new global.errs.NotFound("所评论文章不存在")
         }
 
-        // 创建评论
-        if (nickname && content) {
-            const comment = await CommentModel.create(ctx.vals)
-
-            // 返回数据
-            ctx.body = res.json(comment)
-        } else {
-            throw new global.errs.ParameterException("nickname或content参数错误")
-        }
-
+        // 创建评论 使用验证后的数据 ctx.vals
+        const comment = await CommentModel.create(ctx.vals)
+        // 返回数据
+        ctx.body = res.json(comment)
     }
 
     // 获取评论列表

@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 // 2.字义Schema(描述文档结构)
 const ArticleSchema = new mongoose.Schema({
-  title: { type: String, require: true },//文章标题
+  title: { type: String, required: true },//文章标题
   author: { type: String, required: true }, // 作者
   description: { type: String, required: true }, // 文章简介
   keyword: { type: String, required: true }, // 文章关键字
@@ -17,7 +17,8 @@ const ArticleSchema = new mongoose.Schema({
   category_id: {
     type: mongoose.Schema.Types.ObjectId,
     // ref属性表示引用 可以直接引用Category模型
-    ref: 'Category'
+    ref: 'Category',
+    required: true
   }
   // 为表添加 创建的时间和更新的时间
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' } })

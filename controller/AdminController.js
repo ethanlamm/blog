@@ -11,7 +11,7 @@ class AdminController {
         registerValidator(ctx)
 
         // 第二件事：获取用户名和密码
-        let { nickname, password2 } = ctx.request.body;
+        let { nickname, password2 } = ctx.vals;
 
         // 第三件事：判断数据库中否有同名的用户名
         let currentUser = await AdminModel.findOne({
@@ -37,7 +37,7 @@ class AdminController {
         loginValidator(ctx)
 
         // 得到前端传递的用户名和密码
-        let { nickname, password } = ctx.request.body;
+        let { nickname, password } = ctx.vals;
 
         // 验证用户名、密码、颁发token
         let user = await LoginManager.adminLogin({ nickname, password })

@@ -10,14 +10,15 @@ class ArticleController {
         articleValidator(ctx)
 
         // 获取标题，标题不能重复
-        const { title } = ctx.request.body;
+        const { title } = ctx.vals;
         const hasArticle = await ArticleModel.findOne({ title })
         if (hasArticle) {
             throw new global.errs.Existing("文章标题已存在，请更换标题")
         }
 
-        // 创建
-        await ArticleModel.create(ctx.request.body)
+        // 创建 create 时会验证 ctx.vals 的数据
+        await ArticleModel.create(ctx.vals)
+
         ctx.body = res.success("创建成功")
     }
 
@@ -87,7 +88,7 @@ class ArticleController {
         articleValidator(ctx)
 
         const _id = ctx.params._id;
-        const { title } = ctx.request.body;
+        const { title } = ctx.vals;
 
         // 根据_id找文章
         const article = await ArticleModel.findOne({ _id });
@@ -101,8 +102,8 @@ class ArticleController {
             throw new global.errs.Existing("文章标题已存在，请更换")
         }
 
-        // 更新
-        await ArticleModel.findByIdAndUpdate({ _id }, ctx.request.body)
+        // ✨更新，要添加验证选项 runValidators: true，不添加则不会对 ctx.vals 进行验证
+        await ArticleModel.findByIdAndUpdate({ _id }, ctx.vals, { runValidators: true })
 
         ctx.body = res.json("文章更新成功")
     }
