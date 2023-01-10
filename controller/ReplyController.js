@@ -6,9 +6,10 @@ const res = require("../helpers/response-helper.js")
 class ReplyController {
     // 创建评论
     static async createReply(ctx, next) {
+        // 验证
         replyValidator(ctx)
 
-        const { comment_id } = ctx.request.body;
+        const { comment_id } = ctx.vals;
 
         let comment = await CommentModel.findById({ _id: comment_id })
 
@@ -16,8 +17,7 @@ class ReplyController {
             throw new global.errs.NotFound("没有找相关评论")
         }
 
-        let reply = await ReplyModel.create(ctx.request.body)
-
+        const reply = await ReplyModel.create(ctx.vals)
 
         ctx.body = res.json(reply)
     }
