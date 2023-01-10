@@ -23,14 +23,14 @@ class CommentController {
         ctx.body = res.json(comment)
     }
 
-    // 获取评论列表
+    // 获取所有评论
     static async getCommentList(ctx, next) {
         const { pageIndex = 1, pageSize = 10 } = ctx.query
         const totalSize = await CommentModel.find().countDocuments();
         const commentList = await CommentModel
             .find()
             .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
-            .limit(+pageSize)
+            .limit(parseInt(pageSize))
             .sort({ _id: -1 });
 
         ctx.body = res.json({
@@ -51,7 +51,7 @@ class CommentController {
             throw new global.errs.NotFound("没有找到相关的评论信息")
         }
 
-        // =============> todo: 获取改评论下面的回复
+        // todo: 获取改评论下面的回复
         const replyList = [];
 
         ctx.body = res.json({
