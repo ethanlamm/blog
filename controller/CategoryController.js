@@ -76,7 +76,8 @@ class CategoryController {
             throw new global.errs.NotFound("没有找到相关分类")
         }
         // 验证更新的分类的name是否已存在
-        const hasCategory = await CategoryModel.findOne({ name });
+        // 要除自己外（因为可能name不修改，只修改keyword） $ne 表示不等于
+        const hasCategory = await CategoryModel.findOne({ _id: { $ne: _id }, name });
         if (hasCategory) {
             throw new global.errs.Existing("分类名已存在")
         }
