@@ -63,14 +63,18 @@ class CommentController {
     // 更新评论
     static async updateCommentById(ctx, next) {
         const _id = ctx.params._id;
+        // ❗body只需要传最新的 content 即可，注意需要 trim() 处理(手动验证)
+        const content = ctx.request.body.content.trim()
 
-        const comment = await CommentModel.findByIdAndUpdate({ _id }, ctx.request.body);
-
+        const comment = await CommentModel.findOne({ _id });
         if (!comment) {
             throw new global.errs.NotFound("没有找到相关评论")
         }
 
-        ctx.body = res.json("更新评论成功")
+        // 更新评论
+        await CommentModel.findByIdAndUpdate({ _id }, { content }, { runValidators: true })
+
+        ctx.body = res.success("更新评论成功")
     }
 
     // 删除评论
