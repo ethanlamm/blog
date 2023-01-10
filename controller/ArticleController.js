@@ -108,21 +108,25 @@ class ArticleController {
     }
 
     // 根据ID获取文章详情
-    // static async getArticleDetailById(ctx, next) {
-    //     const _id = ctx.params._id;
-    //     const articleDetail = await ArticleModel.findById({ _id }).populate("category_id");  //连表查询
-    //     if (!articleDetail) {
-    //         throw new global.errs.NotFound("没有找到相关文章")
-    //     }
-    //     await ArticleModel.findByIdAndUpdate({ _id }, { browse: ++articleDetail.browse })
-    //     // ==============> todo:
-    //     //   获取文章下的所有的评论
-    //     const commentList = []; // 现在评论内容是空
-    //     ctx.body = res.json({
-    //         articleDetail,
-    //         commentList
-    //     })
-    // }
+    static async getArticleDetailById(ctx, next) {
+        const _id = ctx.params._id;
+
+        const articleDetail = await ArticleModel.findById({ _id }).populate("category_id");
+        if (!articleDetail) {
+            throw new global.errs.NotFound("没有找到相关文章")
+        }
+
+        // ✨获取文章后，浏览量 +1
+        await ArticleModel.findByIdAndUpdate({ _id }, { browse: ++articleDetail.browse })
+
+        // todo:获取文章下的所有的评论
+        const commentList = []; // 现在评论内容是空
+
+        ctx.body = res.json({
+            articleDetail,
+            commentList
+        })
+    }
 
     // 根据ID删除文章
     static async deleteArticleById(ctx, next) {
@@ -144,40 +148,40 @@ class ArticleController {
     }
 
     // 根据ID获取文章详情 
-    static async getArticleDetailById(ctx, next) {
-        const _id = ctx.params._id;
-        //   文章详情的内容
-        const articleDetail = await ArticleModel.findById({
-            _id
-        }).populate(
-            "category_id"
-        );
-        if (!articleDetail) throw new global.errs.NotFound("没有找到相关分类");
-        // 更新文章浏览器数 browse
-        await ArticleModel.findByIdAndUpdate({
-            _id
-        }, {
-            browse: ++articleDetail.browse
-        });
-        const {
-            data,
-            pageIndex,
-            pageSize,
-            totalSize
-        } =
-            await CommentController.targetComment({
-                target_id: articleDetail._id
-            });
+    // static async getArticleDetailById(ctx, next) {
+    //     const _id = ctx.params._id;
+    //     //   文章详情的内容
+    //     const articleDetail = await ArticleModel.findById({
+    //         _id
+    //     }).populate(
+    //         "category_id"
+    //     );
+    //     if (!articleDetail) throw new global.errs.NotFound("没有找到相关分类");
+    //     // 更新文章浏览器数 browse
+    //     await ArticleModel.findByIdAndUpdate({
+    //         _id
+    //     }, {
+    //         browse: ++articleDetail.browse
+    //     });
+    //     const {
+    //         data,
+    //         pageIndex,
+    //         pageSize,
+    //         totalSize
+    //     } =
+    //         await CommentController.targetComment({
+    //             target_id: articleDetail._id
+    //         });
 
-        ctx.body = res.json({
-            articleDetail,
-            commentList: data,
-            pageIndex,
-            pageSize,
-            commentCount: totalSize,
-            totalSize,
-        });
-    }
+    //     ctx.body = res.json({
+    //         articleDetail,
+    //         commentList: data,
+    //         pageIndex,
+    //         pageSize,
+    //         commentCount: totalSize,
+    //         totalSize,
+    //     });
+    // }
 }
 
 // 导出去一个类
