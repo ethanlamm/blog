@@ -35,8 +35,7 @@ class ArticleController {
         } = ctx.query
 
         // 查询条件
-        // 4.都不传，则查询所有
-        let filter = {};
+        let filter
 
         if (category_id && !keyword) {
             // 1.只传 category_id
@@ -57,6 +56,9 @@ class ArticleController {
                     $regex: new RegExp(keyword, "i"),
                 }
             }
+        } else {
+            // 4.都不传，则查询所有
+            filter = {}
         }
 
         // 根据查询条件得到符合条件的文章总数
