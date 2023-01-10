@@ -10,17 +10,25 @@ const AdvertiseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createAt: {
-    type: Date,
-    required: true,
-    default: Date.now,
-    // 处理时间 
-    get(val) {
-      return moment(val).format('YYYY-MM-DD HH:mm:ss')
-    }
-  },
+  createdAt: { type: String },    // 需要设置 type: String
+  updatedAt: { type: String },    // 需要设置 type: String
+  // createAt: {
+  //   type: Date,
+  //   required: true,
+  //   default: Date.now,
+  //   // 处理时间 
+  //   get(val) {
+  //     return moment(val).format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // },
+}, {
+  timestamps: {
+    currentTime: () => moment().format('YYYY-MM-DD HH:mm:ss')
+  }
 })
-AdvertiseSchema.set('toJSON', { getters: true });
+
+// AdvertiseSchema.set('toJSON', { getters: true });
+
 const AdvertiseModel = mongoose.model('Advertise', AdvertiseSchema);
 // 4.向外暴露model
 module.exports = AdvertiseModel;

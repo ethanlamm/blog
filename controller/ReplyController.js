@@ -4,7 +4,7 @@ const CommentModel = require("../models/CommentModel")
 const res = require("../helpers/response-helper.js")
 
 class ReplyController {
-    // 创建评论
+    // 创建回复
     static async createReply(ctx, next) {
         // 验证
         replyValidator(ctx)
