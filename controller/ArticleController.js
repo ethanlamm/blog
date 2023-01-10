@@ -137,7 +137,8 @@ class ArticleController {
         if (!article) {
             throw new global.errs.NotFound("没有找到相关文章")
         }
-        ctx.body = res.json("文章删除成功")
+
+        ctx.body = res.success("文章删除成功")
     }
 
     // 上传文章封面
