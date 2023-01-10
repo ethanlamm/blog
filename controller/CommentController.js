@@ -1,17 +1,32 @@
 const { commentValidator } = require("../validators/comment");
 const CommentModel = require("../models/CommentModel")
+const ArticleModel = require("../models/ArticleModel")
 const ReplyModel = require("../models/ReplyModel")
 const res = require("../helpers/response-helper.js")
 
 class CommentController {
     // 创建评论
     static async createComment(ctx, next) {
+        // 验证
         commentValidator(ctx)
 
-        // const { target_id } = ctx.request.body;
+        // ✨要拿到验证之后的数据 ctx.vals✨
+        const { nickname, content, target_id } = ctx.vals
+        const hasArticle = await ArticleModel.findById({ _id: target_id })
+        if (!hasArticle) {
+            throw new global.errs.NotFound("所评论文章不存在")
+        }
 
-        const data = await CommentModel.create(ctx.request.body);
-        ctx.body = res.json(data)
+        // 创建评论
+        if (nickname && content) {
+            const comment = await CommentModel.create(ctx.vals)
+
+            // 返回数据
+            ctx.body = res.json(comment)
+        } else {
+            throw new global.errs.ParameterException("nickname或content参数错误")
+        }
+
     }
 
     // 获取评论列表
