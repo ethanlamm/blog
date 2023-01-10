@@ -143,9 +143,14 @@ class ArticleController {
 
     // 上传文章封面
     static async uploadCoverImg(ctx, next) {
-        let imgPath = config.host + ":" + config.port + "/" + "images/" + ctx.req.file.filename;
-        // ctx.body = res.json(imgPath)
-        ctx.body = res.json(ctx.req.file.filename)
+        const { host, port } = config
+        const { filename } = ctx.file   // upload.single("avatar") => ctx.file 获取上传的文件
+
+        // 托管静态资源的目录是 public，直接找public下的文件夹即可，不用将public也写入
+        const imgPath = `${host}:${port}/images/${filename}`
+
+        // ✨前端上传文件，后端返回文件在服务器中的路径
+        ctx.body = res.json({ imgPath }, '上传成功')
     }
 
     // 根据ID获取文章详情 
