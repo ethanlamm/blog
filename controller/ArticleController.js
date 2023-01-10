@@ -83,13 +83,27 @@ class ArticleController {
 
     // 更新文章
     static async updateArticleById(ctx, next) {
+        // 表单验证
+        articleValidator(ctx)
+
         const _id = ctx.params._id;
+        const { title } = ctx.request.body;
 
-        const article = await ArticleModel.findByIdAndUpdate({ _id }, ctx.request.body);
-
+        // 根据_id找文章
+        const article = await ArticleModel.findOne({ _id });
         if (!article) {
             throw new global.errs.NotFound("没有找到相关文章")
         }
+
+        // 除当前要修改的文章外，title不能重复
+        const hasArticle = await ArticleModel.findOne({ _id: { $ne: _id }, title })
+        if (hasArticle) {
+            throw new global.errs.Existing("文章标题已存在，请更换")
+        }
+
+        // 更新
+        await ArticleModel.findByIdAndUpdate({ _id }, ctx.request.body)
+
         ctx.body = res.json("文章更新成功")
     }
 
