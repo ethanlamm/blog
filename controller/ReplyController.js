@@ -22,19 +22,33 @@ class ReplyController {
         ctx.body = res.json(reply)
     }
 
-    // 获取所有回复
+    // 获取回复列表
     static async getReplyList(ctx, next) {
-        const comment_id = ctx.query.comment_id;
-        let replyList = null;
-        if (comment_id) {
-            replyList = await ReplyModel.find({
-                comment_id
-            })
+        // 两种情况：1）不传comment_id，找所有回复列表 2）传入comment_id，找相应评论的回复
+        const comment_id = ctx.query?.comment_id?.trim();
+        const { pageIndex = 1, pageSize = 10 } = ctx.request.body
+
+        let filter
+        if (!comment_id) {
+            // 找所有回复列表
+            filter = {}
         } else {
-            replyList = await ReplyModel.find().sort({ _id: -1 })
+            // 找相应评论的回复列表
+            filter = { comment_id }
         }
 
-        ctx.body = res.json(replyList)
+        const totalSize = await ReplyModel.find(filter).countDocuments()
+        const replyList = await ReplyModel.find(filter)
+            .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
+            .limit(parseInt(pageSize))
+            .sort({ _id: -1 })
+
+        ctx.body = res.json({
+            replyList,
+            totalSize,
+            pageIndex: parseInt(pageIndex),
+            pageSize: parseInt(pageSize)
+        })
     }
 
     // 获取某条回复的详情
