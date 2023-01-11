@@ -9,11 +9,11 @@ const adminSchema = new mongoose.Schema({
   //⻆⾊名称
   nickname: {
     type: String,
-    require: true,
+    required: true,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
     // 调用了set⽅法，当我们写⼊数据时，bcrypt模块会将存⼊的密码进行哈希密码的加密
     set(val) {
       // 加密生成

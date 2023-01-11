@@ -1,10 +1,11 @@
 //models/ArticleModel.js
 // 1.引入mongoose
 const mongoose = require('mongoose')
+const moment = require('moment')
 
 // 2.字义Schema(描述文档结构)
 const ArticleSchema = new mongoose.Schema({
-  title: { type: String, require: true },//文章标题
+  title: { type: String, required: true },//文章标题
   author: { type: String, required: true }, // 作者
   description: { type: String, required: true }, // 文章简介
   keyword: { type: String, required: true }, // 文章内容
@@ -19,9 +20,11 @@ const ArticleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     //ref属性表示引用 可以直接引用Category模型
     ref: 'Category'
-  }
+  },
+  createdAt: { type: String },    // 需要设置 type: String
+  updatedAt: { type: String },    // 需要设置 type: String
   // 为表添加 创建的时间和更新的时间
-}, { timestamps: { createdAt: 'created', updatedAt: 'updated' } })
+}, { timestamps: { currentTime: () => moment().format('YYYY-MM-DD HH:mm:ss') } })
 
 // 3.定义Model(与集合对应,可以操作集合)
 const ArticleModel = mongoose.model('Article', ArticleSchema);
