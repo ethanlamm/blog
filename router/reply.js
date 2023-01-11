@@ -18,7 +18,7 @@ router.get("/reply/:_id", ReplyController.getReplyDetailById)
 // 更新回复  jwtAuth({ secret: config.security.secretKey }), 
 router.put("/reply/:_id", ReplyController.updateReplyById)
 
-// 获取回复详情  jwtAuth({ secret: config.security.secretKey }), 
+// 删除回复  jwtAuth({ secret: config.security.secretKey }), 
 router.delete("/reply/:_id", ReplyController.deleteReplyById)
 
 

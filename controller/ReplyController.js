@@ -80,7 +80,7 @@ class ReplyController {
         ctx.body = res.success("更新回复成功")
     }
 
-    // 删除评论
+    // 删除回复
     static async deleteReplyById(ctx, next) {
         const _id = ctx.params._id;
         let reply = await ReplyModel.findByIdAndDelete(_id);
