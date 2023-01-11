@@ -59,13 +59,10 @@ class ReplyController {
     // 删除广告
     static async deleteAdvertiseById(ctx, next) {
         const _id = ctx.params._id;
-        const advertiseDetail = await AdvertiseModel.findByIdAndDelete({
-            _id
-        });
+        const advertiseDetail = await AdvertiseModel.findByIdAndDelete({ _id });
         if (!advertiseDetail) {
-            throw new global.errs.NotFound("此广告不存在");
+            throw new global.errs.NotFound("广告不存在");
         }
-        ctx.status = 200;
         ctx.body = res.success("删除广告成功");
     }
 }
