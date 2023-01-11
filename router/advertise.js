@@ -5,10 +5,8 @@ const config = require("../config/index.js");
 
 const router = new Router();
 
-// 创建广告
-router.post("/advertise", jwtAuth({
-    secret: config.security.secretKey
-}), AdvertiseController.createAdvertise);
+// 创建广告 jwtAuth({secret: config.security.secretKey})
+router.post("/advertise", AdvertiseController.createAdvertise);
 
 // 获取广告列表
 router.get("/advertise", AdvertiseController.getAdvertiseList);

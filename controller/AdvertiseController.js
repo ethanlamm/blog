@@ -1,22 +1,19 @@
 const AdvertiseModel = require("../models/AdvertiseModel");
-const {
-    advertiseValidator
-} = require("../validators/advertise");
+const { advertiseValidator } = require("../validators/advertise");
 const res = require("../helpers/response-helper");
 class ReplyController {
     // 创建广告
     static async createAdvertise(ctx, next) {
+        // 验证
         advertiseValidator(ctx);
-        const {
-            title
-        } = ctx.request.body;
-        let hasAdvertise = await AdvertiseModel.findOne({
-            title
-        });
+
+        const { title } = ctx.vals;
+        const hasAdvertise = await AdvertiseModel.findOne({ title });
         if (hasAdvertise) {
-            throw new global.errs.Existing("广告已存在");
+            throw new global.errs.Existing("广告名已存在");
         }
-        let advertise = await AdvertiseModel.create(ctx.request.body);
+
+        const advertise = await AdvertiseModel.create(ctx.vals);
         ctx.body = res.json(advertise);
     }
 
