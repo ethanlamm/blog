@@ -46,7 +46,32 @@ function loginValidator(ctx) {
       "密码需要以字母开头, 长度在6~16之间, 只能包含字母、数字和下划线 "
     );
 }
+function updateValidator(ctx) {
+  ctx
+    .validateBody("nickname")
+    .required("用户名是必须的") //只是要求有uname字段
+    .isString() //确保输入的字段是字符串或者可以转换成字符串
+    .trim()
+    .isLength(3, 16, "用户名长度必须是3~16位");
+  ctx
+    .validateBody("oldPassword")
+    .required("旧密码是必填项")
+    .isLength(6, 16, "密码必须是6~16位字符")
+    .match(
+      /^[a-zA-Z]\w{5,15}$/,
+      "密码需要以字母开头, 长度在6~16之间, 只能包含字母、数字和下划线 "
+    );
+  ctx
+    .validateBody("newPassword")
+    .required("新密码是必填项")
+    .isLength(6, 16, "密码必须是6~16位字符")
+    .match(
+      /^[a-zA-Z]\w{5,15}$/,
+      "密码需要以字母开头, 长度在6~16之间, 只能包含字母、数字和下划线 "
+    );
+}
 module.exports = {
   registerValidator,
-  loginValidator
+  loginValidator,
+  updateValidator
 };

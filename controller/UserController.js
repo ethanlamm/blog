@@ -1,7 +1,8 @@
-const { registerValidator, loginValidator } = require("../validators/user.js");
+const { registerValidator, loginValidator, updateValidator } = require("../validators/user.js");
 const UserModel = require("../models/UserModel")
 const LoginManager = require("../services/login")
 const res = require("../helpers/response-helper.js")
+const bcrypt = require("bcryptjs")
 
 class UserController {
     // 注册
@@ -118,6 +119,43 @@ class UserController {
             pageIndex: parseInt(pageIndex),
             pageSize: parseInt(pageSize)
         })
+    }
+
+    // 更新用户信息
+    static async updateUserInfo(ctx, next) {
+        // 验证
+        updateValidator(ctx)
+        // 携带token
+        const _id = ctx.state.user.data;
+        // 提交的表单
+        const { nickname, oldPassword, newPassword } = ctx.vals
+
+        // 1.依据_id到数据库查找用户
+        const user = await UserModel.findOne({ _id });
+        if (!user) {
+            throw new global.errs.AuthFailed("用户不存在")
+        }
+
+        // 2.nickname 重复
+        const hasSameName = await UserModel.findOne({ _id: { $ne: _id }, nickname })
+        if (hasSameName) {
+            throw new global.errs.Existing("用户名已存在，请更换")
+        }
+
+        // 3.对比旧密码
+        const correct = bcrypt.compareSync(oldPassword, user.password);
+        if (!correct) {
+            throw new global.errs.AuthFailed("旧密码不正确")
+        }
+
+        // 4.更新用户信息
+        await UserModel.findByIdAndUpdate({ _id },
+            { nickname, password: newPassword },
+            { runValidators: true }
+        )
+
+        // 返回数据
+        ctx.body = res.success('更新用户信息成功')
     }
 }
 

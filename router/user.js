@@ -21,5 +21,8 @@ router.get("/user", jwtAuth({ secret: config.security.secretKey }), UserControll
 // 获取用户列表 ———— 管理员权限
 router.get("/userList", jwtAuth({ secret: config.security.secretKey }), UserController.getUserList)
 
+// 更新用户信息 用户_id从token中获取
+router.put("/user", jwtAuth({ secret: config.security.secretKey }), UserController.updateUserInfo)
+
 
 module.exports = router;
