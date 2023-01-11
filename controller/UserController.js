@@ -11,23 +11,26 @@ class UserController {
         registerValidator(ctx)
 
         // 第二件事：获取用户名和密码
-        let { nickname, password2 } = ctx.vals;
+        // ✨isAdmin 可根据前端不同的表单，携带isAdmin=true，或者不携带
+        let { nickname, password2, isAdmin } = ctx.vals;
+        // console.log('isAdmin',isAdmin);
 
         // 第三件事：判断数据库中否有同名的用户名
-        let currentUser = await UserModel.findOne({
-            nickname
-        });
+        let currentUser = await UserModel.findOne({ nickname });
         // 若存在，抛出对应错误
         if (currentUser) {
             throw new global.errs.Existing("用户已存在", 900)
         }
 
-        // 第四件事：需要把用户入库
+        // // 第四件事：需要把用户入库
         let user = await UserModel.create({
-            nickname, password: password2
+            nickname,
+            password: password2,
+            // ✨当isAdmin=true时，mongoDB会加入isAdmin属性；当isAdmin=undefined时，则不会加入isAdmin属性
+            isAdmin
         });
 
-        // 返回数据
+        // // 返回数据
         ctx.body = res.json(user)
     }
 
@@ -61,8 +64,10 @@ class UserController {
             throw new global.errs.AuthFailed("用户不存在")
         }
 
-        // 返回数据（注意某些数据的私密性）
-        ctx.body = res.json({ _id, nickname: userInfo.nickname })
+        const { nickname, isAdmin } = userInfo
+
+        // 返回数据（注意某些数据的私密性） ✨添加 isAdmin 字段
+        ctx.body = res.json({ _id, nickname, isAdmin })
     }
 }
 

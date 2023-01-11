@@ -22,6 +22,13 @@ function registerValidator(ctx) {
     .validateBody("password2")
     .required("确认密码是必填项")
     .eq(ctx.vals.password, "两次密码不一致");
+
+  // 1）注册为管理员 isAdmin=true  2）注册为普通用户 isAdmin不传 或 isAdmin=false
+  ctx
+    .validateBody("isAdmin")
+    .optional()   // 可选
+    .trim()
+    .toBoolean()  // 布尔值
 }
 function userValidator(ctx) {
   ctx
