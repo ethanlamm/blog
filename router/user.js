@@ -24,5 +24,7 @@ router.get("/userList", jwtAuth({ secret: config.security.secretKey }), UserCont
 // 更新用户信息 用户_id从token中获取
 router.put("/user", jwtAuth({ secret: config.security.secretKey }), UserController.updateUserInfo)
 
+// 删除用户信息 ———— 管理员权限
+router.delete("/user/:deleteId", jwtAuth({ secret: config.security.secretKey }), UserController.deleteUser)
 
 module.exports = router;

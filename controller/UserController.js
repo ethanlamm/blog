@@ -157,6 +157,33 @@ class UserController {
         // 返回数据
         ctx.body = res.success('更新用户信息成功')
     }
+
+    // 删除用户 ———— 管理员权限
+    static async deleteUser(ctx, next) {
+        // 要被删除用户的id
+        const { deleteId } = ctx.params
+
+        // 管理员id
+        const _id = ctx.state.user.data;
+
+        // 验证权限
+        const user = await UserModel.findOne({ _id });
+        if (!user) {
+            throw new global.errs.AuthFailed("用户不存在")
+        }
+
+        if (!user.isAdmin) {
+            throw new global.errs.Forbidden("用户权限不足")
+        }
+
+        const deleteUser = await UserModel.findByIdAndDelete({ _id: deleteId })
+        if (!deleteUser) {
+            throw new global.errs.NotFound("被删除用户不存在");
+        }
+
+        // 返回数据
+        ctx.body = res.success('删除用户成功')
+    }
 }
 
 // 导出去一个类
