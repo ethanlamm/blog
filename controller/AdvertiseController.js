@@ -35,16 +35,24 @@ class ReplyController {
 
     // 更新广告
     static async updateAdvertiseById(ctx, next) {
-        const _id = ctx.params._id;
-        const advertiseDetail = await AdvertiseModel.findByIdAndUpdate({
-            _id
-        },
-            ctx.request.body
-        );
-        if (!advertiseDetail) {
-            throw new global.errs.NotFound("此广告不存在");
+        // 验证
+        advertiseValidator(ctx)
+
+        const _id = ctx.params._id
+        const { title } = ctx.vals
+
+        const advertise = await AdvertiseModel.findById({ _id })
+        if (!advertise) {
+            throw new global.errs.NotFound("广告不存在");
         }
-        ctx.status = 200;
+
+        const hasAdvertise = await AdvertiseModel.findOne({ _id: { $ne: _id }, title })
+        if (hasAdvertise) {
+            throw new global.errs.NotFound("广告名已存在");
+        }
+
+        await AdvertiseModel.findByIdAndUpdate({ _id }, ctx.vals, { runValidators: true })
+
         ctx.body = res.success("更新广告成功");
     }
 
