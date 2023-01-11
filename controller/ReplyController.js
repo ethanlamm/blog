@@ -54,10 +54,12 @@ class ReplyController {
     // 获取某条回复的详情
     static async getReplyDetailById(ctx, next) {
         const _id = ctx.params._id;
+
         let replyDetail = await ReplyModel.findById(_id);
         if (!replyDetail) {
             throw new global.errs.NotFound("没有相关的回复")
         }
+        // 返回数据
         ctx.body = res.json(replyDetail)
     }
 
