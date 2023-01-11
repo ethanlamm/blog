@@ -11,7 +11,6 @@ const catchError = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    console.log(error instanceof bouncer.ValidationError)
     // 判断校验类型错误
     if (error instanceof bouncer.ValidationError) {
       ctx.body = {
