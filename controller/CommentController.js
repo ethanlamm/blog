@@ -92,38 +92,32 @@ class CommentController {
 
     // 下面两个方法用于一个文章下的所有评论
     static async getTargetComment(ctx, next) {
-        const commentList = await CommentController.targetComment(ctx.query);
-        ctx.status = 200;
+        const commentList = await CommentController.targetComment(ctx);
         ctx.body = res.json(commentList);
     }
-    static async targetComment(params = {}) {
+    static async targetComment(ctx) {
         // target_id: 文章id
-        const {
-            target_id,
-            pageIndex = 1,
-            pageSize = 4
-        } = params;
-        // 评论总数量
-        const totalSize = await CommentModel.find({
-            target_id,
-        }).countDocuments();
-        // 获取所有的评论
-        const commentList = await CommentModel.find({
-            target_id,
-        })
+        const { target_id } = ctx.query
+        const { pageIndex = 1, pageSize = 4 } = ctx.request.body
+
+        // 1.1评论总数量
+        const totalSize = await CommentModel.find({ target_id }).countDocuments();
+        // 1.2获取所有的评论
+        const commentList = await CommentModel.find({ target_id })
             .skip(parseInt(pageIndex - 1) * parseInt(pageSize))
             .limit(parseInt(pageSize))
-            .sort({
-                _id: -1,
-            })
-            .lean();
+            .sort({ _id: -1 })
+            // ✨lean的作用：https://blog.csdn.net/seaalan/article/details/83057449
+            .lean()
+
         //  2.获取评论下回复列表
-        // Promise.all()
+        // ✨Promise.all() => 得到的是修改后的 commentList
         let newCommentList = await Promise.all(
             commentList.map(async (comment) => {
                 let replyList = await ReplyModel.find({
                     comment_id: comment._id,
                 });
+                // 将replyList添加到每个comment对象上，然后返回
                 comment.replyList = replyList;
                 return comment;
             })
@@ -131,9 +125,9 @@ class CommentController {
 
         return {
             data: newCommentList,
-            pageIndex: parseInt(pageIndex),
-            pageSize: parseInt(pageSize),
             totalSize,
+            pageIndex: parseInt(pageIndex),
+            pageSize: parseInt(pageSize)
         };
     }
 }
