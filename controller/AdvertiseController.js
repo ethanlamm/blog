@@ -19,21 +19,17 @@ class ReplyController {
 
     // 获取广告列表
     static async getAdvertiseList(ctx, next) {
-        let advertiseList = await AdvertiseModel.find();
-        ctx.status = 200;
+        const advertiseList = await AdvertiseModel.find().sort({ _id: -1 });
         ctx.body = res.json(advertiseList);
     }
 
     // 获取广告详情
     static async getAdvertiseDetailById(ctx, next) {
         const _id = ctx.params._id;
-        const advertiseDetail = await AdvertiseModel.findById({
-            _id
-        });
+        const advertiseDetail = await AdvertiseModel.findById({ _id });
         if (!advertiseDetail) {
-            throw new global.errs.NotFound("此广告不存在");
+            throw new global.errs.NotFound("广告不存在");
         }
-        ctx.status = 200;
         ctx.body = res.json(advertiseDetail);
     }
 
