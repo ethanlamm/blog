@@ -112,6 +112,9 @@ class ArticleController {
     static async getArticleDetailById(ctx, next) {
         const _id = ctx.params._id;
 
+        // 评论列表参数
+        const { pageIndex, pageSize } = ctx.request.body
+
         const articleDetail = await ArticleModel.findById({ _id }).populate("category_id");
         if (!articleDetail) {
             throw new global.errs.NotFound("没有找到相关文章")
@@ -120,12 +123,20 @@ class ArticleController {
         // ✨获取文章后，浏览量 +1
         await ArticleModel.findByIdAndUpdate({ _id }, { browse: ++articleDetail.browse })
 
-        // todo:获取文章下的所有的评论
-        const commentList = []; // 现在评论内容是空
+        // 获取文章下的所有的评论(含回复)
+        const comentListInfo = await CommentController.targetComment({
+            target_id: _id,
+            pageIndex,
+            pageSize
+        })
+
 
         ctx.body = res.json({
             articleDetail,
-            commentList
+            commentList: comentListInfo.data,
+            totalSize: comentListInfo.totalSize,
+            pageIndex: comentListInfo.pageIndex,
+            pageSize: comentListInfo.pageSize
         })
     }
 

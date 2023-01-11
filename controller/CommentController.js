@@ -92,13 +92,15 @@ class CommentController {
 
     // 下面两个方法用于一个文章下的所有评论
     static async getTargetComment(ctx, next) {
-        const commentList = await CommentController.targetComment(ctx);
+        // target_id: 文章id => ctx.query
+        // pageIndex 和 pageSize => ctx.request.body
+
+        const commentList = await CommentController.targetComment({ ...ctx.query, ...ctx.request.body });
+
         ctx.body = res.json(commentList);
     }
-    static async targetComment(ctx) {
-        // target_id: 文章id
-        const { target_id } = ctx.query
-        const { pageIndex = 1, pageSize = 4 } = ctx.request.body
+    static async targetComment(Params = {}) {
+        const { target_id, pageIndex = 1, pageSize = 4 } = Params
 
         // 1.1评论总数量
         const totalSize = await CommentModel.find({ target_id }).countDocuments();
