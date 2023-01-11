@@ -15,7 +15,11 @@ router.post("/register", UserController.register)
 // 登录 
 router.post("/login", UserController.login)
 
-// 获取用户：先用 koa-jwt 验证 token，验证通过后，可在 ctx.state.user(默认) 获取用户信息
-router.get("/userInfo", jwtAuth({ secret: config.security.secretKey }), UserController.getUserInfo)
+// 获取用户信息(登录后)：先用 koa-jwt 验证 token，验证通过后，可在 ctx.state.user(默认) 获取用户信息
+router.get("/user", jwtAuth({ secret: config.security.secretKey }), UserController.getUserInfo)
+
+// 获取用户列表 ———— 管理员权限
+router.get("/userList", jwtAuth({ secret: config.security.secretKey }), UserController.getUserList)
+
 
 module.exports = router;
