@@ -15,7 +15,7 @@ router.get("/reply", ReplyController.getReplyList)
 // 获取回复详情  jwtAuth({ secret: config.security.secretKey }), 
 router.get("/reply/:_id", ReplyController.getReplyDetailById)
 
-// 获取回复详情  jwtAuth({ secret: config.security.secretKey }), 
+// 更新回复  jwtAuth({ secret: config.security.secretKey }), 
 router.put("/reply/:_id", ReplyController.updateReplyById)
 
 // 获取回复详情  jwtAuth({ secret: config.security.secretKey }), 

@@ -63,14 +63,21 @@ class ReplyController {
         ctx.body = res.json(replyDetail)
     }
 
-    // 修改，编辑，更新回复
+    // 更新回复
     static async updateReplyById(ctx, next) {
         const _id = ctx.params._id;
-        let reply = await ReplyModel.findByIdAndUpdate(_id, ctx.request.body);
+        // ❗body只需要传最新的 content 即可，注意需要 trim() 处理(手动验证)
+        const content = ctx.request.body.content.trim()
+
+        const reply = await ReplyModel.findById({ _id });
         if (!reply) {
             throw new global.errs.NotFound("没有相关的回复")
         }
-        ctx.body = res.success("修改回复成功")
+
+        // 更新回复
+        await ReplyModel.findByIdAndUpdate({ _id }, { content }, { runValidators: true })
+
+        ctx.body = res.success("更新回复成功")
     }
 
     // 删除评论
