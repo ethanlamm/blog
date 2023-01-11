@@ -30,7 +30,7 @@ function registerValidator(ctx) {
     .trim()
     .toBoolean()  // 布尔值
 }
-function userValidator(ctx) {
+function loginValidator(ctx) {
   ctx
     .validateBody("nickname")
     .required("用户名是必须的") //只是要求有uname字段
@@ -48,5 +48,5 @@ function userValidator(ctx) {
 }
 module.exports = {
   registerValidator,
-  userValidator
+  loginValidator
 };

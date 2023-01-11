@@ -1,4 +1,4 @@
-const { registerValidator, userValidator } = require("../validators/user.js");
+const { registerValidator, loginValidator } = require("../validators/user.js");
 const UserModel = require("../models/UserModel")
 const LoginManager = require("../services/login")
 const res = require("../helpers/response-helper.js")
@@ -37,7 +37,7 @@ class UserController {
     // 登录
     static async login(ctx, next) {
         // 校验
-        userValidator(ctx)
+        loginValidator(ctx)
 
         // 得到前端传递的用户名和密码
         let { nickname, password } = ctx.vals;
