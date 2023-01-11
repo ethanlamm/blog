@@ -1,4 +1,4 @@
-const AdminModel = require("../models/AdminModel")
+const UserModel = require("../models/UserModel")
 const bcrypt = require("bcryptjs")
 const { generateToken } = require("../helpers/token-helper.js")
 
@@ -6,7 +6,7 @@ class LoginManager {
     static async adminLogin({ nickname, password }) {
 
         // 1.查找数据库中是否有此用户名和密码
-        const user = await AdminModel.findOne({ nickname });
+        const user = await UserModel.findOne({ nickname });
         if (!user) {
             throw new global.errs.AuthFailed("用户名不存在")
         }

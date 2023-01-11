@@ -1,9 +1,9 @@
-const { registerValidator, loginValidator } = require("../validators/admin.js");
-const AdminModel = require("../models/AdminModel")
+const { registerValidator, userValidator } = require("../validators/user.js");
+const UserModel = require("../models/UserModel")
 const LoginManager = require("../services/login")
 const res = require("../helpers/response-helper.js")
 
-class AdminController {
+class UserController {
     // 注册
     static async register(ctx, next) {
 
@@ -14,7 +14,7 @@ class AdminController {
         let { nickname, password2 } = ctx.vals;
 
         // 第三件事：判断数据库中否有同名的用户名
-        let currentUser = await AdminModel.findOne({
+        let currentUser = await UserModel.findOne({
             nickname
         });
         // 若存在，抛出对应错误
@@ -23,7 +23,7 @@ class AdminController {
         }
 
         // 第四件事：需要把用户入库
-        let user = await AdminModel.create({
+        let user = await UserModel.create({
             nickname, password: password2
         });
 
@@ -34,7 +34,7 @@ class AdminController {
     // 登录
     static async login(ctx, next) {
         // 校验
-        loginValidator(ctx)
+        userValidator(ctx)
 
         // 得到前端传递的用户名和密码
         let { nickname, password } = ctx.vals;
@@ -42,7 +42,7 @@ class AdminController {
         // 验证用户名、密码、颁发token
         let user = await LoginManager.adminLogin({ nickname, password })
 
-        // 返回数据
+        // 返回数据 包含 nickname 和 token
         ctx.body = res.json(user)
     }
 
@@ -52,10 +52,11 @@ class AdminController {
         // ctx.state.user.data 就是颁发 token 时使用的 data 数据，即用户_id
         // console.log(ctx.state.user)
 
+        // ❗❗这里不需要前端传数据，携带登录后返回token即可
         let _id = ctx.state.user.data;
 
         // 依据_id到数据库查找用户信息
-        let userInfo = await AdminModel.findById({ _id });
+        let userInfo = await UserModel.findById({ _id });
         if (!userInfo) {
             throw new global.errs.AuthFailed("用户不存在")
         }
@@ -66,4 +67,4 @@ class AdminController {
 }
 
 // 导出去一个类
-module.exports = AdminController;
+module.exports = UserController;

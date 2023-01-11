@@ -17,6 +17,7 @@ const catchError = async (ctx, next) => {
     // 判断校验类型错误
     if (error instanceof bouncer.ValidationError) {
       console.log('校验错误')
+      ctx.status = 400
       ctx.body = {
         name: error.name,
         message: error.message,
@@ -61,7 +62,7 @@ const catchError = async (ctx, next) => {
       };
     } else {
       // 未知错误
-      ctx.response.status = 500;
+      ctx.status = 500;
       ctx.body = {
         msg: "未知错误！",
         error_code: 9999,
